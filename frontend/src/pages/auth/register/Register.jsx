@@ -7,8 +7,8 @@ const Register = () => {
 	return (
 		<main className={`authMain`}>
 			<WelcomeHeader />
-			<div className="flex justify-center items-center h-screen">
-				<div className="md:p-4 overflow-auto h-screen md:h-auto">
+			<div className="flex justify-center items-center h-screen overflow-auto pb-24 pt-36 md:p-0">
+				<div className="md:p-4">
 					<RegisterScreen />
 					<p className="mt-4 text-center text-gray-400">
 						Already registered?
