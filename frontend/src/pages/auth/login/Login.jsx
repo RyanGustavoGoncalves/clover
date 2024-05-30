@@ -8,7 +8,7 @@ const Login = () => {
 		<main className="authMain">
 			<WelcomeHeader />
 			<div className="flex justify-center items-center h-screen">
-				<div className="p-4">
+				<div>
 					<LoginScreen />
 					<p className="mt-4 text-center text-gray-400">
 						Don't have an account?
