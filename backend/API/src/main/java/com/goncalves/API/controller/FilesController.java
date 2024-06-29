@@ -86,8 +86,6 @@ public class FilesController {
         return files;
     }
 
-
-
     /**
      * Endpoint para obter o conteúdo de um arquivo com base nos IDs do projeto e do arquivo.
      *
@@ -358,6 +356,25 @@ public class FilesController {
             // Registra a exceção para fins de depuração
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PutMapping("/{idFile}/update")
+    public ResponseEntity updateFileName(@PathVariable String idFile, @RequestBody String fileName){
+        try{
+            Files file = repository.findById(idFile).orElseThrow(() ->
+                new NotFoundException("File not found", idFile)
+            );
+
+            if(fileName == null && fileName.isBlank()){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse("File name cannot be empty"));
+            }
+                file.setFileName(fileName);
+            return ResponseEntity.ok(repository.save(file));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new InternalError("Internal server error.", e));
         }
     }
 

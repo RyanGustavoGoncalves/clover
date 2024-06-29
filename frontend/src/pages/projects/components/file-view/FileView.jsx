@@ -64,7 +64,6 @@ const FileView = () => {
         commitMessage: "",
         changes: null,
     });
-
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalDeleteIsOpen, setModalDeleteIsOpen] = useState(false);
     const [newCommitAndFile, setNewCommitAndFile] = useState({
@@ -204,6 +203,7 @@ const FileView = () => {
                         showFileEditor={showFileEditor}
                         handleDownloadFile={handleDownloadFile}
                         CopyToClipboard={CopyToClipboard}
+                        idFile={idFile}
                     />
                 </nav>
 

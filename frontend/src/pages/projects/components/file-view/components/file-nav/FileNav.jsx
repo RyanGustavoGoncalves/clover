@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import GetLanguageInfos from "../../../utils/getLanguageInfo/GetLanguageInfos";
 import fileIcon from "../../../../assets/fileIcon.png";
@@ -11,6 +11,8 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CardTitle } from "@/components/ui/card";
+import Modal from "@/pages/components/Modal";
+import { UpdateFileNameModal } from "./components/UpdateFileNameModal";
 
 const FileNav = ({
 	singleRequest,
@@ -24,12 +26,19 @@ const FileNav = ({
 	isEditing,
 	showFileEditor,
 	handleDownloadFile,
-	CopyToClipboard
+	CopyToClipboard,
+	idFile
 }) => {
+	const [modalFileIsOpen, setModalFileIsOpen] = useState(false);
+
+	const openModalUpdateName = () => {
+		setModalFileIsOpen(true);
+	};
 	return (
 		<>
 			<div
 				className="lupaSearch cursor-pointer"
+				onDoubleClick={() => { setModalFileIsOpen(true) }}
 				onClick={() => {
 					setShowCommits(false), setCommitNull();
 				}}
@@ -77,8 +86,6 @@ const FileNav = ({
 					</TooltipProvider>
 				</div>
 				{!showFileEditor && (
-
-
 					<div className="commitsProject-dsp-flex-align">
 						<TooltipProvider>
 							<Tooltip>
@@ -156,6 +163,10 @@ const FileNav = ({
 						</Tooltip>
 					</TooltipProvider>
 				</div>
+
+				<Modal isOpen={modalFileIsOpen} onClose={() => setModalFileIsOpen(false)}>
+					<UpdateFileNameModal close={setModalFileIsOpen} idFile={idFile} fileState={singleRequest}/>
+				</Modal>
 			</div>
 		</>
 	);
