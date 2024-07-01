@@ -204,6 +204,7 @@ const FileView = () => {
                         handleDownloadFile={handleDownloadFile}
                         CopyToClipboard={CopyToClipboard}
                         idFile={idFile}
+                        fileContent={fileContent}
                     />
                 </nav>
 

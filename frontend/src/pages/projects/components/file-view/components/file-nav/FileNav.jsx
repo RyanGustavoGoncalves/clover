@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import GetLanguageInfos from "../../../utils/getLanguageInfo/GetLanguageInfos";
 import fileIcon from "../../../../assets/fileIcon.png";
-import { ListPlus, Pencil, Trash2, ListCollapse, List, Download, Copy } from "lucide-react";
+import { ListPlus, Pencil, Trash2, ListCollapse, Download, Copy, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	Tooltip,
@@ -13,6 +13,9 @@ import {
 import { CardTitle } from "@/components/ui/card";
 import Modal from "@/pages/components/Modal";
 import { UpdateFileNameModal } from "./components/UpdateFileNameModal";
+import { runCodeAndReturnResult } from "./components/utils/runCodeAndReturnResult";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import Terminal from "./components/Terminal/Terminal";
 
 const FileNav = ({
 	singleRequest,
@@ -27,13 +30,20 @@ const FileNav = ({
 	showFileEditor,
 	handleDownloadFile,
 	CopyToClipboard,
-	idFile
+	idFile,
+	fileContent,
 }) => {
+	const token = localStorage.getItem("token");
 	const [modalFileIsOpen, setModalFileIsOpen] = useState(false);
+	const [output, setOutput] = useState("");
 
 	const openModalUpdateName = () => {
 		setModalFileIsOpen(true);
 	};
+
+	const runCode = async () => {
+		await runCodeAndReturnResult(token, fileContent, setOutput);
+	}
 	return (
 		<>
 			<div
@@ -85,6 +95,31 @@ const FileNav = ({
 						</Tooltip>
 					</TooltipProvider>
 				</div>
+				{!showFileEditor && (
+					<div className="commitsProject-dsp-flex-align">
+						<Sheet>
+							<SheetTrigger
+								onClick={runCode}
+							>
+								<Button
+									variant="outline"
+									size="icon"
+								>
+									<Play className="h-4 w-4" />
+								</Button>
+							</SheetTrigger>
+							<SheetContent side={"bottom"}>
+								<SheetHeader>
+									<SheetTitle>Terminal</SheetTitle>
+									<SheetDescription>
+										<Terminal output={output} />
+									</SheetDescription>
+								</SheetHeader>
+							</SheetContent>
+						</Sheet>
+					</div>
+				)}
+
 				{!showFileEditor && (
 					<div className="commitsProject-dsp-flex-align">
 						<TooltipProvider>
@@ -165,7 +200,7 @@ const FileNav = ({
 				</div>
 
 				<Modal isOpen={modalFileIsOpen} onClose={() => setModalFileIsOpen(false)}>
-					<UpdateFileNameModal close={setModalFileIsOpen} idFile={idFile} fileState={singleRequest}/>
+					<UpdateFileNameModal close={setModalFileIsOpen} idFile={idFile} fileState={singleRequest} />
 				</Modal>
 			</div>
 		</>
