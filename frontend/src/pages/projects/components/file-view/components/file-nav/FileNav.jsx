@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import GetLanguageInfos from "../../../utils/getLanguageInfo/GetLanguageInfos";
 import fileIcon from "../../../../assets/fileIcon.png";
@@ -16,6 +16,7 @@ import { UpdateFileNameModal } from "./components/UpdateFileNameModal";
 import { runCodeAndReturnResult } from "./components/utils/runCodeAndReturnResult";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import Terminal from "./components/Terminal/Terminal";
+import { WebSocketConfig } from "./components/utils/WebSocketConfig";
 
 const FileNav = ({
 	singleRequest,
@@ -36,13 +37,18 @@ const FileNav = ({
 	const token = localStorage.getItem("token");
 	const [modalFileIsOpen, setModalFileIsOpen] = useState(false);
 	const [output, setOutput] = useState("");
+	const [messages, setMessages] = useState([]);
+
+	useEffect(() => {
+		const webSocketConfig = new WebSocketConfig("ws://localhost:8080/compile");
+	}, []);
+
 
 	const openModalUpdateName = () => {
 		setModalFileIsOpen(true);
 	};
-
 	const runCode = async () => {
-		await runCodeAndReturnResult(token, fileContent, setOutput);
+		await runCodeAndReturnResult(token, fileContent, setOutput, singleRequest);
 	}
 	return (
 		<>

@@ -1,7 +1,7 @@
 package com.goncalves.API.controller.terminal;
 
 import com.goncalves.API.infra.exception.Successfully;
-import com.goncalves.API.service.JavaCompilerService;
+import com.goncalves.API.service.CompilerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,22 +14,19 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/terminal")
 public class TerminalController {
 
     @Autowired
-    private JavaCompilerService javaCompilerService;
-
-    public TerminalController(JavaCompilerService javaCompilerService) {
-        this.javaCompilerService = javaCompilerService;
-    }
+    private CompilerService compilerService;
 
     @PostMapping("/compile")
     public ResponseEntity compileCode(@RequestBody CodeRequest codeRequest) {
-        String code = codeRequest.getCode();
-        String filename = "TempCode.java";
+        String code = codeRequest.code();
+        String filename = codeRequest.fileName();
         Path path = Paths.get(filename);
 
         try {
@@ -37,7 +34,7 @@ public class TerminalController {
             Files.write(path, code.getBytes());
 
             // Compile and run the Java file
-            String result = javaCompilerService.compileAndRunCode(path);
+            String result = compilerService.compileJavaAndRunCode(path);
 
             // Check if the result contains a compilation error
             if (result.startsWith("Compilation Error:")) {
@@ -49,6 +46,8 @@ public class TerminalController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("IO Error: " + e.getMessage());
         } catch (InterruptedException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Interrupted Error: " + e.getMessage());
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
         } finally {
             try {
                 Files.deleteIfExists(path);
