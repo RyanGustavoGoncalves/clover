@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 
 import GetLanguageInfos from "../../../utils/getLanguageInfo/GetLanguageInfos";
 import fileIcon from "../../../../assets/fileIcon.png";
-import { ListPlus, Pencil, Trash2, ListCollapse, List, Download, Copy } from "lucide-react";
+import { ListPlus, Pencil, Trash2, ListCollapse, List, Download, Copy, FileOutput } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	Tooltip,
@@ -11,6 +11,8 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CardTitle } from "@/components/ui/card";
+import { getFileContent } from "../../../utils/getFileContent/getFileContent";
+import { useParams } from "react-router-dom";
 
 const FileNav = ({
 	singleRequest,
@@ -26,6 +28,16 @@ const FileNav = ({
 	handleDownloadFile,
 	CopyToClipboard
 }) => {
+	const { idProject, idFile, idFolder } = useParams();
+	const [fileContent, setFileContent] = useState({ contentType: "", data: "" });
+	const token = localStorage.getItem("token");
+
+	const handle_sync_file = async () => {
+		await getFileContent(token, idProject, idFile, setFileContent);
+		console.log(fileContent);
+
+	}
+
 	return (
 		<>
 			<div
@@ -76,9 +88,31 @@ const FileNav = ({
 						</Tooltip>
 					</TooltipProvider>
 				</div>
+
+				{showFileEditor && (
+
+
+					<div className="commitsProject-dsp-flex-align">
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Button
+										variant="outline"
+										size="icon"
+										onClick={handle_sync_file}
+									>
+										<FileOutput className="h-4 w-4" />
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>Sync VScode File</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					</div>
+				)}
+
 				{!showFileEditor && (
-
-
 					<div className="commitsProject-dsp-flex-align">
 						<TooltipProvider>
 							<Tooltip>
