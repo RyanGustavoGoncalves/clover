@@ -29,6 +29,7 @@ export const fetchRequestById = async (token, idProject, setSingleRequest) => {
                 };
 
                 setSingleRequest(updatedSingleRequest);
+                return updatedSingleRequest;
             } else {
                 console.error("Response does not contain a valid object:", responseData);
             }

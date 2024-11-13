@@ -21,6 +21,7 @@ export const getFileContent = async (token, idProject, idFile, setFilesRequest) 
                 // Se não for uma imagem, trata como texto ou outro tipo de conteúdo
                 const responseData = await response.text();
                 setFilesRequest({ contentType: "text", data: responseData });
+                return responseData;
             }
         } else if (response.status === 404) {
             console.log("Request not found");

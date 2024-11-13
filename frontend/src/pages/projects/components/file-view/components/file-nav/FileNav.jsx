@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import GetLanguageInfos from "../../../utils/getLanguageInfo/GetLanguageInfos";
 import fileIcon from "../../../../assets/fileIcon.png";
-import { ListPlus, Pencil, Trash2, ListCollapse, List, Download, Copy, FileOutput } from "lucide-react";
+import { ListPlus, Pencil, Trash2, ListCollapse, Download, Copy, FileOutput } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	Tooltip,
@@ -13,6 +13,7 @@ import {
 import { CardTitle } from "@/components/ui/card";
 import { getFileContent } from "../../../utils/getFileContent/getFileContent";
 import { useParams } from "react-router-dom";
+import { fetchRequestById } from "@/pages/home/components/utils/fetchRequestById/fetchRequestById";
 
 const FileNav = ({
 	singleRequest,
@@ -30,12 +31,63 @@ const FileNav = ({
 }) => {
 	const { idProject, idFile, idFolder } = useParams();
 	const [fileContent, setFileContent] = useState({ contentType: "", data: "" });
+	const [singleRequestProject, setSingleRequestProject] = useState({});
 	const token = localStorage.getItem("token");
+	const ws = useRef(null);
+
+	useEffect(() => {
+		ws.current = new WebSocket('ws://localhost:8090');
+
+		ws.current.onopen = () => {
+			console.log('Conectado ao servidor WebSocket');
+		};
+
+		ws.current.onmessage = (event) => {
+			const message = JSON.parse(event.data);
+			if (message.type === 'success') {
+				console.log(message.message);
+			} else if (message.type === 'error') {
+				console.error(message.message);
+			} else if (message.type === 'fileSaved') {
+				// Atualizar o conteúdo do arquivo no frontend
+				setFileContent({ contentType: "text", data: message.payload.fileContent });
+				console.log(`Arquivo ${message.payload.filePath} atualizado no frontend.`);
+			}
+		};
+
+		ws.current.onclose = () => {
+			console.log('Conexão WebSocket fechada');
+		};
+
+		ws.current.onerror = (error) => {
+			console.error('Erro no WebSocket:', error);
+		};
+
+		return () => {
+			if (ws.current) {
+				ws.current.close();
+			}
+		};
+	}, []);
 
 	const handle_sync_file = async () => {
-		await getFileContent(token, idProject, idFile, setFileContent);
-		console.log(fileContent);
+		const data = await getFileContent(token, idProject, idFile, setFileContent);
+		const project = await fetchRequestById(token, idProject, setSingleRequestProject);
+		console.log('Conteúdo do arquivo:', singleRequestProject);
 
+		if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+			const payload = {
+				idProject,
+				idFile,
+				fileContent: data,
+				fileName: singleRequest.fileName,
+				projectName: project.projectName
+			};
+			ws.current.send(JSON.stringify({ type: 'syncFile', payload }));
+			console.log('Dados do arquivo enviados para a extensão do VSCode');
+		} else {
+			console.error('WebSocket não está conectado');
+		}
 	}
 
 	return (
