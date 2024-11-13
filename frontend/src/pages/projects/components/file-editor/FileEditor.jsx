@@ -14,6 +14,7 @@ import { checkerTheme } from "../file-view/components/utils/checkerTheme/checker
 import { useTheme } from "@/components/theme-provider";
 import { useEffect } from "react";
 import { DiffEditor } from "@monaco-editor/react";
+import { convertContentByFile } from "./components/utils/convertContentByFile/convertContentByFile";
 
 const FileEditor = ({ singleRequest, fileContent, idProject, idFile, setShowFileEditor }) => {
 
@@ -142,24 +143,10 @@ const FileEditor = ({ singleRequest, fileContent, idProject, idFile, setShowFile
     }
 
 
-    const convertContentByFile = (content) => {
-        // Obter os dados do conteúdo do arquivo
-        const fileContentData = content;
-
-        // Converter os dados para um objeto Blob
-        const blob = new Blob([fileContentData], { type: 'application/octet-stream' });
-
-        // Criar um novo objeto File a partir do Blob
-        const file = new File([blob], singleRequest.fileName, { type: 'application/octet-stream' });
-
-        // Retornar o objeto File
-        return file;
-    }
-
     const sendCommit = async () => {
         setLoading(true);
         // Chamar a função convertContentByFile() para obter o objeto File
-        const convertContent = convertContentByFile(saveContent);
+        const convertContent = convertContentByFile(saveContent, singleRequest);
 
         newCommitAndFile.newFile = convertContent;
 

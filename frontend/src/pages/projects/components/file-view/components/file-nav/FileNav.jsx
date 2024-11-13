@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import GetLanguageInfos from "../../../utils/getLanguageInfo/GetLanguageInfos";
 import fileIcon from "../../../../assets/fileIcon.png";
-import { ListPlus, Pencil, Trash2, ListCollapse, Download, Copy, FileOutput } from "lucide-react";
+import { ListPlus, Pencil, Trash2, ListCollapse, Download, Copy, FileOutput, Braces } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	Tooltip,
@@ -14,6 +14,7 @@ import { CardTitle } from "@/components/ui/card";
 import { getFileContent } from "../../../utils/getFileContent/getFileContent";
 import { useParams } from "react-router-dom";
 import { fetchRequestById } from "@/pages/home/components/utils/fetchRequestById/fetchRequestById";
+import { toast } from "sonner";
 
 const FileNav = ({
 	singleRequest,
@@ -27,7 +28,7 @@ const FileNav = ({
 	isEditing,
 	showFileEditor,
 	handleDownloadFile,
-	CopyToClipboard
+	CopyToClipboard,
 }) => {
 	const { idProject, idFile, idFolder } = useParams();
 	const [fileContent, setFileContent] = useState({ contentType: "", data: "" });
@@ -48,10 +49,6 @@ const FileNav = ({
 				console.log(message.message);
 			} else if (message.type === 'error') {
 				console.error(message.message);
-			} else if (message.type === 'fileSaved') {
-				// Atualizar o conteúdo do arquivo no frontend
-				setFileContent({ contentType: "text", data: message.payload.fileContent });
-				console.log(`Arquivo ${message.payload.filePath} atualizado no frontend.`);
 			}
 		};
 
@@ -73,7 +70,6 @@ const FileNav = ({
 	const handle_sync_file = async () => {
 		const data = await getFileContent(token, idProject, idFile, setFileContent);
 		const project = await fetchRequestById(token, idProject, setSingleRequestProject);
-		console.log('Conteúdo do arquivo:', singleRequestProject);
 
 		if (ws.current && ws.current.readyState === WebSocket.OPEN) {
 			const payload = {
@@ -84,7 +80,7 @@ const FileNav = ({
 				projectName: project.projectName
 			};
 			ws.current.send(JSON.stringify({ type: 'syncFile', payload }));
-			console.log('Dados do arquivo enviados para a extensão do VSCode');
+			toast.success('Dados do arquivo enviados para a extensão do VSCode');
 		} else {
 			console.error('WebSocket não está conectado');
 		}
@@ -153,7 +149,7 @@ const FileNav = ({
 										size="icon"
 										onClick={handle_sync_file}
 									>
-										<FileOutput className="h-4 w-4" />
+										<Braces className="h-4 w-4" />
 									</Button>
 								</TooltipTrigger>
 								<TooltipContent>
