@@ -12,6 +12,18 @@ const languagesData = {
         name: "java",
         imgUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg"
     },
+    jsx: {
+        name: "javascript",
+        imgUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg"
+    },
+    tsx: {
+        name: "typescript",
+        imgUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg"
+    },
+    json: {
+        name: "json",
+        imgUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/json/json-original.svg"
+    },
     c: {
         name: "c",
         imgUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/c/c-original.svg"
@@ -75,7 +87,7 @@ const languagesData = {
     txt: {
         name: "txt",
         imgUrl: fileIcon
-    }
+    },
 };
 
 export default languagesData;

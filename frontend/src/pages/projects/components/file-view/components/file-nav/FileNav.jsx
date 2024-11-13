@@ -71,6 +71,11 @@ const FileNav = ({
 		const data = await getFileContent(token, idProject, idFile, setFileContent);
 		const project = await fetchRequestById(token, idProject, setSingleRequestProject);
 
+		if (!data) {
+			toast.error('O arquivo não pode ser sincronizado, verifique se o arquivo existe ou se não está vazio e tente novamente');
+			return;
+		}
+
 		if (ws.current && ws.current.readyState === WebSocket.OPEN) {
 			const payload = {
 				idProject,
