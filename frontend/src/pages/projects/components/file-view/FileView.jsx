@@ -242,8 +242,8 @@ const FileView = () => {
                                                 height="70vh"
                                                 width="100%"
                                                 language={GetLanguageInfos(singleRequest.fileName).name}
-                                                original={fileContent.data}
-                                                modified={showCommitsSelected.changes}
+                                                original={showCommitsSelected.changes}
+                                                modified={fileContent.data}
                                                 theme={editorTheme}
                                                 options={{
                                                     renderSideBySide: true,
